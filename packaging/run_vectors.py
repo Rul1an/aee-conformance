@@ -130,12 +130,18 @@ from agent_evidence_vectors import (
     a2ajcs,
     admission,
     agenticprocess,
+    aggregateaccounting,
     anchoredchain,
     approvalbinding,
     auditrecord,
     authoritydispatch,
+    cardreceipt,
     changeadmission,
     chunkedexport,
+    completionconfirmation,
+    convertedargs,
+    delegatorright,
+    dispatchfence,
     donerun,
     gradefloor,
     identitybinding,
@@ -143,6 +149,7 @@ from agent_evidence_vectors import (
     observedeffect,
     receiptchainend,
     receiptsignature,
+    recorded,
     sourcecoverage,
     starhint,
     traceanchor,
@@ -3887,10 +3894,17 @@ def _run_non_reference_suite(
         identitybinding.SUITE,
         authoritydispatch.SUITE,
         approvalbinding.SUITE,
+        dispatchfence.SUITE,
+        aggregateaccounting.SUITE,
+        *cardreceipt.SUITES,
+        convertedargs.SUITE,
+        delegatorright.SUITE,
+        completionconfirmation.SUITE,
         chunkedexport.SUITE,
         *donerun.SUITES,
         traceanchor.SUITE,
         gradefloor.SUITE,
+        recorded.SUITE,
         changeadmission.SUITE,
         agenticprocess.SUITE,
         a2ajcs.SUITE,
@@ -3914,10 +3928,17 @@ def _run_non_reference_suite(
         identitybinding.SUITE: identitybinding.run,
         authoritydispatch.SUITE: authoritydispatch.run,
         approvalbinding.SUITE: approvalbinding.run,
+        dispatchfence.SUITE: dispatchfence.run,
+        aggregateaccounting.SUITE: aggregateaccounting.run,
+        **{suite: cardreceipt.runner(suite) for suite in cardreceipt.SUITES},
+        convertedargs.SUITE: convertedargs.run,
+        delegatorright.SUITE: delegatorright.run,
+        completionconfirmation.SUITE: completionconfirmation.run,
         chunkedexport.SUITE: chunkedexport.run,
         **{suite: donerun.runner(suite) for suite in donerun.SUITES},
         traceanchor.SUITE: traceanchor.run,
         gradefloor.SUITE: gradefloor.run,
+        recorded.SUITE: recorded.run,
         changeadmission.SUITE: changeadmission.run,
         agenticprocess.SUITE: agenticprocess.run,
         sourcecoverage.SUITE: sourcecoverage.run_or_refuse,
@@ -5373,6 +5394,9 @@ def main() -> int:
         from agent_evidence_vectors.eval_result.run import main as evalresult_main
 
         return evalresult_main(sys.argv[2:])
+    if len(sys.argv) > 1 and sys.argv[1] == "recorded":
+        # Recorded sets: retained bytes against their publisher's digest list.
+        return recorded.main(sys.argv[2:])
     return rail_main()
 
 
